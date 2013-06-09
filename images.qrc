@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/draughts">
+        <file alias="checker_king_red">src/data/draughts/checker_king_red.svg</file>
+        <file alias="checker_king_white">src/data/draughts/checker_king_white.svg</file>
+        <file alias="checker_red">src/data/draughts/checker_red.svg</file>
+        <file alias="checker_white">src/data/draughts/checker_white.svg</file>
+        <file alias="field_dark">src/data/draughts/field_dark.svg</file>
+        <file alias="field_white">src/data/draughts/field_white.svg</file>
+    </qresource>
+</RCC>
