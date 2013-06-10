@@ -7,26 +7,20 @@ namespace bg {
 namespace model {
 namespace draughts {
 
+enum class Player;
+enum class Type;
+
 class Checker : public bg::model::Piece
 {
     Q_OBJECT
 public:
-    enum class Type {
-        NORMAL = 1,
-        KING = 2
-    };
-
-    enum class Color {
-        WHITE = 1,
-        BLACK = 2
-    };
 
     explicit Checker(QObject *parent = 0);
 
-    void setColor(Color color);
+    void setColor(Player color);
     void setType(Type type);
 
-    Color color() const;
+    Player color() const;
     Type type() const;
     
 signals:
@@ -34,7 +28,7 @@ signals:
 public slots:
 
 private:
-    Color m_color;
+    Player m_color;
     Type m_type;
     
 };

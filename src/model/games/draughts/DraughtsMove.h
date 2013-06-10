@@ -28,7 +28,7 @@ signals:
     
 public slots:
 
-private:
+protected:
     QVector<Field *> m_moves;
     
 };

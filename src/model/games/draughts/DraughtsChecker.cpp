@@ -1,5 +1,7 @@
 #include "DraughtsChecker.h"
 
+#include "DraughtsTypes.h"
+
 namespace bg {
 namespace model {
 namespace draughts {
@@ -9,7 +11,7 @@ Checker::Checker(QObject *parent) :
 {
 }
 
-void Checker::setColor(Color color)
+void Checker::setColor(Player color)
 {
     m_color = color;
 }
@@ -19,12 +21,12 @@ void Checker::setType(Type type)
     m_type = type;
 }
 
-Checker::Color Checker::color() const
+Player Checker::color() const
 {
     return m_color;
 }
 
-Checker::Type Checker::type() const
+Type Checker::type() const
 {
     return m_type;
 }

@@ -1,7 +1,7 @@
 #include "DraughtsBrazilianBoard.h"
 
 #include <model/games/draughts/DraughtsChecker.h>
-#include <model/games/draughts/DraughtsField.h>
+#include <model/games/draughts/brazilian/DraughtsBrazilianField.h>
 
 namespace bg {
 namespace model {
@@ -25,7 +25,7 @@ bg::model::Piece *Board::createPiece() const
 
 bg::model::Field *Board::createField() const
 {
-    return new bg::model::draughts::Field();
+    return new bg::model::draughts::brazilian::Field();
 }
 
 } // namespace brazilian

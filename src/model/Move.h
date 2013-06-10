@@ -13,6 +13,8 @@ class Move : public QObject
     Q_OBJECT
 public:
     explicit Move(QObject *parent = 0);
+
+    virtual QString toString() const = 0;
     
 signals:
     

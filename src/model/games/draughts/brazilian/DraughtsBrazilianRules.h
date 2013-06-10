@@ -8,7 +8,7 @@ namespace bg {
 namespace model {
 namespace draughts {
 
-enum class PlayerTurn;
+enum class Player;
 
 namespace brazilian {
 
@@ -20,12 +20,17 @@ class Rules : public bg::model::draughts::Rules
 public:
     explicit Rules(QObject *parent = 0);
 
-    void initialiseBoard(bg::model::Board *board) const;
-    QVector<bg::model::draughts::MovePtr> findAllLegalMoves(Board *board, PlayerTurn whoseTurn);
+    void setBoard(Board *board);
+    void beginGame();
+    QVector<bg::model::draughts::MovePtr> findAllLegalMoves();
     
 signals:
     
 public slots:
+
+private:
+    Board *m_board;
+    Player m_whoseTurn;
 
 };
 

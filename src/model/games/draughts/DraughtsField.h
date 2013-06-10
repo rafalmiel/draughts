@@ -25,7 +25,7 @@ signals:
     
 public slots:
 
-private:
+protected:
     qint32 m_fieldId;
 
     Checker *m_checker;

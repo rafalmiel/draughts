@@ -12,8 +12,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+}
+
+void MainWindow::on_actionGameDraughtsBrazilian_triggered()
+{
     draughts::BoardWidget *w = new draughts::BoardWidget();
-    w->show();
+    setCentralWidget(w);
 }
 
 MainWindow::~MainWindow()
@@ -22,3 +26,5 @@ MainWindow::~MainWindow()
 }
 
 }}
+
+

@@ -38,7 +38,7 @@ Checker *Board::checkerAt(qint32 fieldNum) const
     return m_fields.at(fieldNum)->checker();
 }
 
-bg::model::draughts::Field *Board::fiendAt(qint32 fieldNum) const
+bg::model::draughts::Field *Board::fieldAt(qint32 fieldNum) const
 {
     return m_fields.at(fieldNum);
 }

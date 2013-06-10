@@ -5,8 +5,19 @@
 #include <QGraphicsScene>
 #include <QGraphicsSvgItem>
 #include <QResizeEvent>
+#include <QMap>
 
 namespace bg {
+
+namespace model {
+namespace draughts {
+class Checker;
+namespace brazilian {
+class Game;
+}
+}
+}
+
 namespace ui {
 namespace draughts {
 
@@ -22,18 +33,24 @@ public:
     explicit BoardWidget(QWidget *parent = 0);
     ~BoardWidget();
     
+    void setupBoard();
+    void removeCheckerAt(int i);
 private:
+    bool isCheckerOnBoard(bg::model::draughts::Checker *checker, qint32 fieldNum);
+    QString filenameByChecker(bg::model::draughts::Checker *checker);
+    void setupCheckersItems();
     void resizeEvent(QResizeEvent *);
     Ui::BoardWidget *ui;
 
     QGraphicsScene *m_boardScene;
 
     QVector<QGraphicsSvgItem *> m_fields;
-    QVector<QGraphicsSvgItem *> m_whiteCheckers;
-    QVector<QGraphicsSvgItem *> m_redCheckers;
+    QMap<qint32, QGraphicsSvgItem *> m_checkers;
 
     static const qreal SVG_ITEM_WIDTH;
     static const qint32 BOARD_FIELDS_DIM;
+
+    model::draughts::brazilian::Game *m_game;
 };
 
 

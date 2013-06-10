@@ -9,16 +9,41 @@ namespace draughts {
 namespace brazilian {
 
 Game::Game(QObject *parent) :
-    bg::model::draughts::Game(parent)
+    bg::model::draughts::Game(parent),
+    m_board(nullptr),
+    m_rules(nullptr)
 {
 }
 
-bg::model::Board *createBoard()
+void Game::beginGame()
 {
-    return new bg::model::draughts::brazilian::Board();
+    if (m_board) delete m_board;
+    if (m_rules) delete m_rules;
+
+    m_board = static_cast<draughts::brazilian::Board *>(
+                createBoard());
+    m_rules = static_cast<draughts::brazilian::Rules *>(
+                createRules());
+
+    m_rules->setBoard(m_board);
+    m_rules->beginGame();
+
+    m_rules->findAllLegalMoves();
 }
 
-bg::model::Rules *createRules()
+bg::model::draughts::brazilian::Board *Game::board() const
+{
+    return m_board;
+}
+
+bg::model::Board *Game::createBoard()
+{
+    bg::model::Board *board = new bg::model::draughts::brazilian::Board();
+    board->initialise();
+    return board;
+}
+
+bg::model::Rules *Game::createRules()
 {
     return new bg::model::draughts::brazilian::Rules();
 }

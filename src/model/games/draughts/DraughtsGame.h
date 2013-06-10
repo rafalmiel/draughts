@@ -7,11 +7,6 @@ namespace bg {
 namespace model {
 namespace draughts {
 
-enum class PlayerTurn {
-    WHITE,
-    BLACK
-};
-
 class Game : public bg::model::Game
 {
     Q_OBJECT

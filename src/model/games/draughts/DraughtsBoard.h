@@ -24,7 +24,7 @@ public:
 
     void setCheckerAt(qint32 fieldNum, Checker *checker);
     Checker *checkerAt(qint32 fieldNum) const;
-    Field *fiendAt(qint32 fieldNum) const;
+    Field *fieldAt(qint32 fieldNum) const;
     
 signals:
     

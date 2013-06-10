@@ -1,6 +1,12 @@
 #include "DraughtsBoardWidget.h"
 #include "ui_DraughtsBoardWidget.h"
 
+#include <model/games/draughts/DraughtsTypes.h>
+#include <model/games/draughts/brazilian/DraughtsBrazilianGame.h>
+#include <model/games/draughts/brazilian/DraughtsBrazilianBoard.h>
+#include <model/games/draughts/DraughtsChecker.h>
+#include <model/games/draughts/DraughtsField.h>
+
 #include <QDebug>
 
 namespace bg {
@@ -16,7 +22,71 @@ BoardWidget::BoardWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    m_game = new model::draughts::brazilian::Game();
+    m_game->beginGame();
+
     m_boardScene = new QGraphicsScene();
+
+    setupBoard();
+    setupCheckersItems();
+
+    ui->gvBoard->setScene(m_boardScene);
+}
+
+QString BoardWidget::filenameByChecker(model::draughts::Checker *checker)
+{
+    if (checker->color() == model::draughts::Player::BLACK) {
+        return ":/draughts/checker_red";
+    } else {
+        return ":/draughts/checker_white";
+    }
+}
+
+bool BoardWidget::isCheckerOnBoard(model::draughts::Checker *checker, qint32 fieldNum)
+{
+    return (m_checkers.contains(fieldNum) &&
+            static_cast<model::draughts::Player>(
+                m_checkers[fieldNum]->data(0).toInt()) == checker->color());
+
+}
+
+void BoardWidget::removeCheckerAt(int i)
+{
+    if (m_checkers.contains(i)) {
+        m_boardScene->removeItem(m_checkers[i]);
+        delete m_checkers[i];
+        m_checkers.remove(i);
+    }
+}
+
+void BoardWidget::setupCheckersItems()
+{
+    model::draughts::brazilian::Board *board = m_game->board();
+    for (int i = 0; i < 64; ++i) {
+        model::draughts::Checker *checker = board->checkerAt(i);
+        if (checker && !isCheckerOnBoard(checker, i)) {
+            QString filename = filenameByChecker(checker);
+
+            QGraphicsSvgItem *svgChecker = new QGraphicsSvgItem(filename);
+            qint32 row = i % BOARD_FIELDS_DIM;
+            qint32 col = i / BOARD_FIELDS_DIM;
+            svgChecker->setX(row * SVG_ITEM_WIDTH);
+            svgChecker->setY(col * SVG_ITEM_WIDTH);
+            svgChecker->setData(0, static_cast<int>(checker->color()));
+
+            removeCheckerAt(i);
+
+            m_checkers.insert(i, svgChecker);
+
+            m_boardScene->addItem(svgChecker);
+        } else if (!checker) {
+            removeCheckerAt(i);
+        }
+    }
+}
+
+void BoardWidget::setupBoard()
+{
     for (qint32 i = 0; i < BOARD_FIELDS_DIM*BOARD_FIELDS_DIM; ++i) {
         qint32 row = i % BOARD_FIELDS_DIM;
         qint32 col = i / BOARD_FIELDS_DIM;
@@ -30,33 +100,6 @@ BoardWidget::BoardWidget(QWidget *parent) :
         m_fields.push_back(item);
         m_boardScene->addItem(item);
     }
-
-    for (int i = 0; i < 12; ++i) {
-        QGraphicsSvgItem *checker = new QGraphicsSvgItem(":/draughts/checker_red");
-        int ind = i*2;
-        if (ind < 8 || ind >= 16) ind++;
-        qint32 row = ind % BOARD_FIELDS_DIM;
-        qint32 col = ind / BOARD_FIELDS_DIM;
-        checker->setX(row * SVG_ITEM_WIDTH);
-        checker->setY(col * SVG_ITEM_WIDTH);
-        m_redCheckers.push_back(checker);
-        m_boardScene->addItem(checker);
-    }
-
-    for (int i = 0; i < 12; ++i) {
-        QGraphicsSvgItem *checker = new QGraphicsSvgItem(":/draughts/checker_white");
-        int ind = i*2;
-        if (ind < 8 || ind >= 16) ind++;
-        ind = 63 - ind;
-        qint32 row = ind % BOARD_FIELDS_DIM;
-        qint32 col = ind / BOARD_FIELDS_DIM;
-        checker->setX(row * SVG_ITEM_WIDTH);
-        checker->setY(col * SVG_ITEM_WIDTH);
-        m_whiteCheckers.push_back(checker);
-        m_boardScene->addItem(checker);
-    }
-
-    ui->gvBoard->setScene(m_boardScene);
 }
 
 void BoardWidget::resizeEvent(QResizeEvent *)
