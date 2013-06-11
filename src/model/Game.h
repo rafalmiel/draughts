@@ -6,6 +6,8 @@
 namespace bg {
 namespace model {
 
+class Board;
+
 class Game : public QObject
 {
     Q_OBJECT
