@@ -110,6 +110,13 @@ void BoardWidget::resizeEvent(QResizeEvent *)
     ui->gvBoard->scale(scale, scale);
 }
 
+void BoardWidget::on_btnApplyMove_clicked()
+{
+    if (m_game->applyMove(ui->edMove->text())) {
+        setupCheckersItems();
+    }
+}
+
 BoardWidget::~BoardWidget()
 {
     delete ui;
@@ -118,3 +125,4 @@ BoardWidget::~BoardWidget()
 } // namespace draughts
 } // namespace ui
 } // namespace bg
+

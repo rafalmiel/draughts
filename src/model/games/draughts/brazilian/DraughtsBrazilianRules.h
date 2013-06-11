@@ -20,6 +20,7 @@ class Rules : public bg::model::draughts::Rules
 public:
     explicit Rules(QObject *parent = 0);
 
+    bool applyMove(const MovePtr &move);
     void setBoard(Board *board);
     void beginGame();
     QVector<bg::model::draughts::MovePtr> findAllLegalMoves();

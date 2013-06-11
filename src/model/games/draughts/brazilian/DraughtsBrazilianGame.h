@@ -10,6 +10,7 @@ class Board;
 class Rules;
 
 namespace draughts {
+class Field;
 namespace brazilian {
 
 class Board;
@@ -27,12 +28,15 @@ public:
     bg::model::Rules *createRules();
 
     bg::model::draughts::brazilian::Board * board() const;
+
+    bool applyMove(const QString &move);
     
 signals:
     
 public slots:
     
 private:
+    draughts::Field *stringToField(const QString &field) const;
     bg::model::draughts::brazilian::Board *m_board;
     bg::model::draughts::brazilian::Rules *m_rules;
 };

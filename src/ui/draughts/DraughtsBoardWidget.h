@@ -35,6 +35,9 @@ public:
     
     void setupBoard();
     void removeCheckerAt(int i);
+private slots:
+    void on_btnApplyMove_clicked();
+
 private:
     bool isCheckerOnBoard(bg::model::draughts::Checker *checker, qint32 fieldNum);
     QString filenameByChecker(bg::model::draughts::Checker *checker);

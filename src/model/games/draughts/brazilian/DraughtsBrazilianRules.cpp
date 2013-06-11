@@ -7,6 +7,7 @@
 #include <model/games/draughts/brazilian/DraughtsBrazilianMove.h>
 #include <model/games/draughts/DraughtsChecker.h>
 #include <model/games/draughts/DraughtsGame.h>
+#include <model/games/draughts/DraughtsField.h>
 
 namespace bg {
 namespace model {
@@ -47,6 +48,36 @@ void Rules::beginGame()
     }
 }
 
+bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
+{
+    if (move->size() > 0) {
+        Checker *checker = move->fieldAt(0)->checker();
+        if (checker && checker->color() == m_whoseTurn) {
+            if (move->size() > 1) {
+                if (!move->fieldAt(1)->checker()) {
+                    int colDir =
+                            (m_whoseTurn == Player::BLACK) ?
+                                1:-1;
+                    qint32 f1 = move->fieldAt(0)->fieldId();
+                    qint32 f2 = move->fieldAt(1)->fieldId();
+                    qint32 r1 = f1 % 8;
+                    qint32 c1 = f1 / 8;
+                    qint32 r2 = f2 % 8;
+                    qint32 c2 = f2 / 8;
+                    if (c2 == c1 + colDir && (qAbs(r1 - r2) == 1)) {
+                        move->fieldAt(1)->setChecker(checker);
+                        move->fieldAt(0)->setChecker(nullptr);
+                        m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
+                        findAllLegalMoves();
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
 
 QVector<bg::model::draughts::MovePtr> Rules::findAllLegalMoves()
 {
