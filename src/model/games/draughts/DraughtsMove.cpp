@@ -26,4 +26,16 @@ void Move::addField(Field *field)
     m_moves.push_back(field);
 }
 
+QString Move::toString() const
+{
+    QString ret = "";
+    bool first = true;
+    foreach (const draughts::Field *field, m_moves) {
+        if (!first) ret += "-";
+        first = false;
+        ret += field->toString();
+    }
+    return ret;
+}
+
 }}}

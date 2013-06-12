@@ -12,11 +12,11 @@ namespace bg {
 namespace model {
 namespace draughts {
 class Checker;
-namespace brazilian {
 class Game;
+class Field;
 }
 }
-}
+
 
 namespace ui {
 namespace draughts {
@@ -30,7 +30,7 @@ class BoardWidget : public QWidget
     Q_OBJECT
     
 public:
-    explicit BoardWidget(QWidget *parent = 0);
+    explicit BoardWidget(model::draughts::Game *game, QWidget *parent = 0);
     ~BoardWidget();
     
     void setupBoard();
@@ -39,6 +39,7 @@ private slots:
     void on_btnApplyMove_clicked();
 
 private:
+    model::draughts::Field *stringToField(const QString &field) const;
     bool isCheckerOnBoard(bg::model::draughts::Checker *checker, qint32 fieldNum);
     QString filenameByChecker(bg::model::draughts::Checker *checker);
     void setupCheckersItems();
@@ -50,10 +51,13 @@ private:
     QVector<QGraphicsSvgItem *> m_fields;
     QMap<qint32, QGraphicsSvgItem *> m_checkers;
 
-    static const qreal SVG_ITEM_WIDTH;
-    static const qint32 BOARD_FIELDS_DIM;
 
-    model::draughts::brazilian::Game *m_game;
+    model::draughts::Game *m_game;
+
+    const qint32 c_fieldsNum;
+    const qint32 c_boardDim;
+
+    static const qreal SVG_ITEM_WIDTH;
 };
 
 

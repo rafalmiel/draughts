@@ -27,9 +27,9 @@ public:
     bg::model::Board *createBoard();
     bg::model::Rules *createRules();
 
-    bg::model::draughts::brazilian::Board * board() const;
+    bg::model::draughts::Board * board() const;
 
-    bool applyMove(const QString &move);
+    bool applyMove(const draughts::MovePtr &move);
     
 signals:
     

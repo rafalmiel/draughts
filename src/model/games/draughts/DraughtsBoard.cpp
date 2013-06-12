@@ -12,6 +12,11 @@ Board::Board(qint32 fieldsNum, QObject *parent) :
 {
 }
 
+qint32 Board::fieldsNum() const
+{
+    return m_fieldsNum;
+}
+
 void Board::initialise()
 {
     m_fields.clear();

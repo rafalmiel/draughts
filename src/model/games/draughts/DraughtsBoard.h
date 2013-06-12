@@ -21,6 +21,7 @@ public:
     void initialise();
 
     QString toString() const;
+    qint32 fieldsNum() const;
 
     void setCheckerAt(qint32 fieldNum, Checker *checker);
     Checker *checkerAt(qint32 fieldNum) const;

@@ -3,6 +3,7 @@
 
 #include <model/games/draughts/DraughtsMove.h>
 #include <model/games/draughts/DraughtsRules.h>
+#include <model/games/draughts/DraughtsTypes.h>
 
 namespace bg {
 namespace model {

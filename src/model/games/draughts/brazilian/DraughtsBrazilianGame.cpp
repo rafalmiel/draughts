@@ -16,15 +16,14 @@ Game::Game(QObject *parent) :
     m_board(nullptr),
     m_rules(nullptr)
 {
+    m_board = static_cast<draughts::brazilian::Board *>(
+                createBoard());
 }
 
 void Game::beginGame()
 {
-    if (m_board) delete m_board;
     if (m_rules) delete m_rules;
 
-    m_board = static_cast<draughts::brazilian::Board *>(
-                createBoard());
     m_rules = static_cast<draughts::brazilian::Rules *>(
                 createRules());
 
@@ -34,28 +33,12 @@ void Game::beginGame()
     m_rules->findAllLegalMoves();
 }
 
-bool Game::applyMove(const QString &move)
+bool Game::applyMove(const draughts::MovePtr &move)
 {
-    QStringList splitMove = move.split("-");
-    bg::model::draughts::MovePtr mov(new bg::model::draughts::brazilian::Move());
-    foreach (const QString &str, splitMove) {
-        mov->addField(stringToField(str));
-    }
-    return m_rules->applyMove(mov);
+    return m_rules->applyMove(move);
 }
 
-draughts::Field *Game::stringToField(const QString &field) const
-{
-    if (field.size() == 2) {
-        qint32 row = field.toStdString().at(0) - 'a';
-        qint32 col = 8 - (field.toStdString().at(1) - '0');
-        return m_board->fieldAt(col * 8 + row);
-    }
-
-    return nullptr;
-}
-
-bg::model::draughts::brazilian::Board *Game::board() const
+bg::model::draughts::Board *Game::board() const
 {
     return m_board;
 }

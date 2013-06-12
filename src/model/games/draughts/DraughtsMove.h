@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include <model/Move.h>
+#include "DraughtsTypes.h"
 
 namespace bg {
 namespace model {
@@ -11,8 +12,6 @@ namespace draughts {
 
 class Field;
 class Move;
-
-typedef QSharedPointer<Move> MovePtr;
 
 class Move : public bg::model::Move
 {
@@ -23,6 +22,7 @@ public:
     qint32 size() const;
     Field *fieldAt(qint32 ind);
     void addField(Field *field);
+    QString toString() const;
     
 signals:
     

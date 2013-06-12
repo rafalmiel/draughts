@@ -1,9 +1,15 @@
 #ifndef DRAUGHTSTYPES_H
 #define DRAUGHTSTYPES_H
 
+#include <QSharedPointer>
+
 namespace bg {
 namespace model {
 namespace draughts {
+
+class Move;
+
+typedef QSharedPointer<Move> MovePtr;
 
 enum class Player {
     WHITE,

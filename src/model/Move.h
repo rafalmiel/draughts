@@ -4,9 +4,10 @@
 #include <QObject>
 #include <QSharedPointer>
 
+#include "Types.h"
+
 namespace bg {
 namespace model {
-
 
 class Move : public QObject
 {
@@ -21,8 +22,6 @@ signals:
 public slots:
     
 };
-
-typedef QSharedPointer<::bg::model::Move> MovePtr;
 
 } // namespace model
 } // namespace bg

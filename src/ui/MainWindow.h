@@ -8,6 +8,12 @@ class MainWindow;
 }
 
 namespace bg {
+
+namespace model {
+class GameManager;
+class Game;
+}
+
 namespace ui {
 
 class MainWindow : public QMainWindow
@@ -15,7 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(model::GameManager *gameManager, QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
@@ -23,6 +29,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    model::GameManager *m_gameManager;
+    model::Game *m_game;
+
 };
 
 }
