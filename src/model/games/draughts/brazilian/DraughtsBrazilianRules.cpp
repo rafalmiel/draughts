@@ -21,6 +21,16 @@ Rules::Rules(QObject *parent) :
 {
 }
 
+Rules::~Rules()
+{
+    for (int i = 0; i < 64; ++i) {
+        if (m_board->checkerAt(i)) {
+            delete m_board->checkerAt(i);
+            m_board->setCheckerAt(i, nullptr);
+        }
+    }
+}
+
 void Rules::setBoard(Board *board)
 {
     m_board = board;

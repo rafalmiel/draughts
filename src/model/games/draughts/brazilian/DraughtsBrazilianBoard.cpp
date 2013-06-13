@@ -20,12 +20,12 @@ void Board::initialise()
 
 bg::model::Piece *Board::createPiece() const
 {
-    return new bg::model::draughts::brazilian::Checker();
+	return new bg::model::draughts::brazilian::Checker();
 }
 
 bg::model::Field *Board::createField() const
 {
-    return new bg::model::draughts::brazilian::Field();
+	return new bg::model::draughts::brazilian::Field();
 }
 
 } // namespace brazilian

@@ -20,6 +20,7 @@ class Rules : public bg::model::draughts::Rules
     Q_OBJECT
 public:
     explicit Rules(QObject *parent = 0);
+    ~Rules();
 
     bool applyMove(const MovePtr &move);
     void setBoard(Board *board);

@@ -17,6 +17,7 @@ class Board : public ::bg::model::Board
     Q_OBJECT
 public:
     explicit Board(qint32 fieldsNum, QObject *parent = 0);
+    ~Board();
 
     void initialise();
 

@@ -35,6 +35,9 @@
        </color>
       </brush>
      </property>
+     <property name="transformationAnchor">
+      <enum>QGraphicsView::NoAnchor</enum>
+     </property>
     </widget>
    </item>
   </layout>

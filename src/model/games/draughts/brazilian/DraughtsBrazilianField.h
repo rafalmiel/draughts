@@ -10,8 +10,9 @@ namespace brazilian {
 
 class Field : public bg::model::draughts::Field
 {
+    Q_OBJECT
 public:
-    Field();
+    Field(QObject *parent = 0);
 
     QString toString() const;
 };

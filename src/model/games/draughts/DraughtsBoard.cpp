@@ -1,6 +1,8 @@
 #include "DraughtsBoard.h"
 
 #include <model/games/draughts/DraughtsField.h>
+#include <model/games/draughts/DraughtsChecker.h>
+#include <QDebug>
 
 namespace bg {
 namespace model {
@@ -10,6 +12,20 @@ Board::Board(qint32 fieldsNum, QObject *parent) :
     ::bg::model::Board(parent),
     m_fieldsNum(fieldsNum)
 {
+}
+
+Board::~Board()
+{
+    qDebug() << "~Board()";
+    foreach (Field *f, m_fields) {
+        if (f->checker()) {
+            qDebug() << "del checker";
+            delete f->checker();
+        }
+        qDebug() << "del field";
+        delete f;
+    }
+    m_fields.clear();
 }
 
 qint32 Board::fieldsNum() const

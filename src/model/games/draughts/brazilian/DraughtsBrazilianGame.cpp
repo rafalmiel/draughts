@@ -20,6 +20,12 @@ Game::Game(QObject *parent) :
                 createBoard());
 }
 
+Game::~Game()
+{
+	if (m_rules) delete m_rules;
+	delete m_board;
+}
+
 void Game::beginGame()
 {
     if (m_rules) delete m_rules;

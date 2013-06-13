@@ -21,6 +21,7 @@ class Game : public bg::model::draughts::Game
     Q_OBJECT
 public:
     explicit Game(QObject *parent = 0);
+    ~Game();
 
     void beginGame();
 

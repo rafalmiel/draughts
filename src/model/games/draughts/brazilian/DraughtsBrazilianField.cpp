@@ -5,7 +5,7 @@ namespace model {
 namespace draughts {
 namespace brazilian {
 
-Field::Field()
+Field::Field(QObject *parent) : draughts::Field(parent)
 {
 }
 

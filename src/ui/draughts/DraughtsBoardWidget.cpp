@@ -38,18 +38,22 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
 {
     if (m_clickedFields.contains(num)) {
         m_boardScene->removeItem(m_clickedFields[num]);
+        delete m_clickedFields[num];
         m_clickedFields.remove(num);
     } else {
         qint32 row = num % c_boardDim;
         qint32 col = num / c_boardDim;
-        QGraphicsRectItem *rect = new QGraphicsRectItem(QRect(row * SVG_ITEM_WIDTH, col * SVG_ITEM_WIDTH, SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
+
+        QGraphicsRectItem *rect = new QGraphicsRectItem(
+                    QRect(row * SVG_ITEM_WIDTH,
+                          col * SVG_ITEM_WIDTH,
+                          SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
+
         rect->setPen(QPen(QBrush(Qt::black), 5));
         rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
         m_boardScene->addItem(rect);
         m_clickedFields.insert(num, rect);
     }
-
-    qDebug() << "field clicked: " << num;
 }
 
 QString BoardWidget::filenameByChecker(model::draughts::Checker *checker)
@@ -163,6 +167,8 @@ void BoardWidget::on_btnApplyMove_clicked()
 
 BoardWidget::~BoardWidget()
 {
+    ui->gvBoard->setScene(nullptr);
+    delete m_boardScene;
     delete ui;
 }
 
