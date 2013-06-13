@@ -25,6 +25,8 @@ namespace Ui {
 class BoardWidget;
 }
 
+class DraughtsBoardScene;
+
 class BoardWidget : public QWidget
 {
     Q_OBJECT
@@ -36,9 +38,12 @@ public:
     void setupBoard();
     void removeCheckerAt(int i);
 private slots:
+    void slotOnFieldClicked(qint32);
     void on_btnApplyMove_clicked();
 
 private:
+
+
     model::draughts::Field *stringToField(const QString &field) const;
     bool isCheckerOnBoard(bg::model::draughts::Checker *checker, qint32 fieldNum);
     QString filenameByChecker(bg::model::draughts::Checker *checker);
@@ -46,10 +51,11 @@ private:
     void resizeEvent(QResizeEvent *);
     Ui::BoardWidget *ui;
 
-    QGraphicsScene *m_boardScene;
+    DraughtsBoardScene *m_boardScene;
 
     QVector<QGraphicsSvgItem *> m_fields;
     QMap<qint32, QGraphicsSvgItem *> m_checkers;
+    QMap<qint32, QGraphicsRectItem *> m_clickedFields;
 
 
     model::draughts::Game *m_game;

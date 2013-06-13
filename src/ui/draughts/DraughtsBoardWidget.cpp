@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <qmath.h>
 
+#include "DraughtsBoardTypes.h"
+#include "DraughtsBoardScene.h"
 #include <model/games/draughts/Draughts.h>
 
 namespace bg {
@@ -22,12 +24,32 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_boardScene = new QGraphicsScene();
+    m_boardScene = new DraughtsBoardScene();
+    connect(m_boardScene, SIGNAL(fieldClicked(qint32)),
+            this, SLOT(slotOnFieldClicked(qint32)));
 
     setupBoard();
     setupCheckersItems();
 
     ui->gvBoard->setScene(m_boardScene);
+}
+
+void BoardWidget::slotOnFieldClicked(qint32 num)
+{
+    if (m_clickedFields.contains(num)) {
+        m_boardScene->removeItem(m_clickedFields[num]);
+        m_clickedFields.remove(num);
+    } else {
+        qint32 row = num % c_boardDim;
+        qint32 col = num / c_boardDim;
+        QGraphicsRectItem *rect = new QGraphicsRectItem(QRect(row * SVG_ITEM_WIDTH, col * SVG_ITEM_WIDTH, SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
+        rect->setPen(QPen(QBrush(Qt::black), 5));
+        rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
+        m_boardScene->addItem(rect);
+        m_clickedFields.insert(num, rect);
+    }
+
+    qDebug() << "field clicked: " << num;
 }
 
 QString BoardWidget::filenameByChecker(model::draughts::Checker *checker)
@@ -64,12 +86,17 @@ void BoardWidget::setupCheckersItems()
         if (checker && !isCheckerOnBoard(checker, i)) {
             QString filename = filenameByChecker(checker);
 
+
+
             QGraphicsSvgItem *svgChecker = new QGraphicsSvgItem(filename);
+            svgChecker->setFlag(QGraphicsItem::ItemIsMovable);
+            //svgChecker->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
             qint32 row = i % c_boardDim;
             qint32 col = i / c_boardDim;
             svgChecker->setX(row * SVG_ITEM_WIDTH);
             svgChecker->setY(col * SVG_ITEM_WIDTH);
-            svgChecker->setData(0, static_cast<int>(checker->color()));
+            svgChecker->setData(toInt(SvgKeys::Type), toInt(ItemType::Checker));
+            svgChecker->setData(toInt(SvgKeys::CheckerColor), toInt(checker->color()));
 
             removeCheckerAt(i);
 
@@ -94,6 +121,8 @@ void BoardWidget::setupBoard()
         QGraphicsSvgItem *item = new QGraphicsSvgItem(file);
         item->setX(row * SVG_ITEM_WIDTH);
         item->setY(col * SVG_ITEM_WIDTH);
+        item->setData(toInt(SvgKeys::Type), toInt(ItemType::Field));
+        item->setData(toInt(SvgKeys::FieldNum), i);
         m_fields.push_back(item);
         m_boardScene->addItem(item);
     }

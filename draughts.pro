@@ -37,7 +37,8 @@ SOURCES += src/main.cpp\
     src/model/games/draughts/brazilian/DraughtsBrazilianField.cpp \
     src/model/games/draughts/brazilian/DraughtsBrazilianMove.cpp \
     src/model/games/draughts/brazilian/DraughtsBrazilianChecker.cpp \
-    src/model/GameManager.cpp
+    src/model/GameManager.cpp \
+    src/ui/draughts/DraughtsBoardScene.cpp
 
 HEADERS  += src/ui/MainWindow.h \
     src/model/Board.h \
@@ -63,7 +64,9 @@ HEADERS  += src/ui/MainWindow.h \
     src/model/games/draughts/brazilian/DraughtsBrazilian.h \
     src/model/games/draughts/brazilian/DraughtsBrazilianChecker.h \
     src/model/Types.h \
-    src/model/GameManager.h
+    src/model/GameManager.h \
+    src/ui/draughts/DraughtsBoardScene.h \
+    src/ui/draughts/DraughtsBoardTypes.h
 
 FORMS    += src/ui/MainWindow.ui \
     src/ui/draughts/DraughtsBoardWidget.ui

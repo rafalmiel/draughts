@@ -25,7 +25,17 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QGraphicsView" name="gvBoard"/>
+    <widget class="QGraphicsView" name="gvBoard">
+     <property name="backgroundBrush">
+      <brush brushstyle="Dense5Pattern">
+       <color alpha="0">
+        <red>170</red>
+        <green>170</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
