@@ -2,9 +2,9 @@
 
 #include <QDebug>
 
-#include <model/games/draughts/DraughtsTypes.h>
 #include "DraughtsBrazilianBoard.h"
-#include <model/games/draughts/brazilian/DraughtsBrazilianMove.h>
+#include "DraughtsBrazilianMove.h"
+#include <model/games/draughts/DraughtsTypes.h>
 #include <model/games/draughts/DraughtsChecker.h>
 #include <model/games/draughts/DraughtsGame.h>
 #include <model/games/draughts/DraughtsField.h>
@@ -107,14 +107,16 @@ QVector<bg::model::draughts::MovePtr> Rules::findAllLegalMoves()
             if (ncol >= 0 && ncol < 8) {
                 if (nrow >= 0 && nrow < 8)
                     if (!m_board->checkerAt(nrow + ncol * 8)) {
-                        bg::model::draughts::MovePtr move(new bg::model::draughts::brazilian::Move());
+                        bg::model::draughts::MovePtr move =
+                                m_board->createMove().staticCast<bg::model::draughts::Move>();
                         move->addField(m_board->fieldAt(row + col * 8));
                         move->addField(m_board->fieldAt(nrow + ncol * 8));
                         movesVec.push_back(move);
                     }
                 if (nrow2 >= 0 && nrow2 < 8)
                     if (!m_board->checkerAt(nrow2 + ncol * 8)) {
-                        bg::model::draughts::MovePtr move(new bg::model::draughts::brazilian::Move());
+                        bg::model::draughts::MovePtr move =
+                                m_board->createMove().staticCast<bg::model::draughts::Move>();
                         move->addField(m_board->fieldAt(row + col * 8));
                         move->addField(m_board->fieldAt(nrow2 + ncol * 8));
                         movesVec.push_back(move);

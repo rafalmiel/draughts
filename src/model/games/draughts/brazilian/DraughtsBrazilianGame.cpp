@@ -2,6 +2,7 @@
 
 #include <QStringList>
 
+#include <model/Game.h>
 #include "DraughtsBrazilianBoard.h"
 #include "DraughtsBrazilianRules.h"
 #include "DraughtsBrazilianMove.h"
@@ -22,8 +23,13 @@ Game::Game(QObject *parent) :
 
 Game::~Game()
 {
-	if (m_rules) delete m_rules;
-	delete m_board;
+    if (m_rules) delete m_rules;
+    delete m_board;
+}
+
+model::MovePtr Game::createMove() const
+{
+    return m_board->createMove();
 }
 
 void Game::beginGame()
@@ -54,6 +60,11 @@ bg::model::Board *Game::createBoard()
     bg::model::Board *board = new bg::model::draughts::brazilian::Board();
     board->initialise();
     return board;
+}
+
+bg::model::Move* Game::createMove_impl() const
+{
+     return new draughts::brazilian::Move();
 }
 
 bg::model::Rules *Game::createRules()

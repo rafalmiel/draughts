@@ -7,7 +7,8 @@ namespace model {
 namespace draughts {
 namespace brazilian {
 
-Move::Move()
+Move::Move(QObject *parent) :
+    draughts::Move(parent)
 {
 }
 

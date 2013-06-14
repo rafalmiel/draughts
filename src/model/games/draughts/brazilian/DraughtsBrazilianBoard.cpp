@@ -2,6 +2,7 @@
 
 #include <model/games/draughts/brazilian/DraughtsBrazilianChecker.h>
 #include <model/games/draughts/brazilian/DraughtsBrazilianField.h>
+#include <model/games/draughts/brazilian/DraughtsBrazilianMove.h>
 
 namespace bg {
 namespace model {
@@ -26,6 +27,11 @@ bg::model::Piece *Board::createPiece() const
 bg::model::Field *Board::createField() const
 {
 	return new bg::model::draughts::brazilian::Field();
+}
+
+bg::model::Move *Board::createMove_impl() const
+{
+    return new bg::model::draughts::brazilian::Move();
 }
 
 } // namespace brazilian

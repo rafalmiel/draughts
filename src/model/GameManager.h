@@ -17,7 +17,7 @@ public:
 
     static GameManager *instance();
 
-    Game *createGame(GameType type) const;
+    Game *createGame(const GameType type) const;
     
 signals:
     

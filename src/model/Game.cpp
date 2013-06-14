@@ -1,5 +1,10 @@
 #include "Game.h"
 
+#include <QMutexLocker>
+#include <QDebug>
+
+#include "Move.h"
+
 namespace bg {
 namespace model {
 

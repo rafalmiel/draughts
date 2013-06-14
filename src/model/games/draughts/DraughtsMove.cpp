@@ -26,6 +26,11 @@ void Move::addField(Field *field)
     m_moves.push_back(field);
 }
 
+void Move::cleanup()
+{
+    m_moves.clear();
+}
+
 QString Move::toString() const
 {
     QString ret = "";

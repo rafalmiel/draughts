@@ -13,14 +13,19 @@ class Move : public QObject
 {
     Q_OBJECT
 public:
-    explicit Move(QObject *parent = 0);
+    friend class Board;
 
     virtual QString toString() const = 0;
+    virtual void cleanup() = 0;
     
 signals:
+    void released(Move *);
     
 public slots:
-    
+    void release();
+
+protected:
+    explicit Move(QObject *parent = 0);
 };
 
 } // namespace model

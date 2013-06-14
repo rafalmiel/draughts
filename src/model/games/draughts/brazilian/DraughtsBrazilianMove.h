@@ -10,8 +10,9 @@ namespace brazilian {
 
 class Move : public bg::model::draughts::Move
 {
+    Q_OBJECT
 public:
-    Move();
+    Move(QObject *parent = 0);
 
     QString toString() const;
 };

@@ -31,12 +31,14 @@ public:
     bg::model::draughts::Board * board() const;
 
     bool applyMove(const draughts::MovePtr &move);
-    
+
+    model::MovePtr createMove() const;
 signals:
     
 public slots:
     
 private:
+    bg::model::Move* createMove_impl() const;
     draughts::Field *stringToField(const QString &field) const;
     bg::model::draughts::brazilian::Board *m_board;
     bg::model::draughts::brazilian::Rules *m_rules;

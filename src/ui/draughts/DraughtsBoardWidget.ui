@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QGraphicsView" name="gvBoard">
+    <widget class="bg::ui::draughts::DraughtsBoardView" name="gvBoard">
      <property name="backgroundBrush">
       <brush brushstyle="Dense5Pattern">
        <color alpha="0">
@@ -35,6 +35,9 @@
        </color>
       </brush>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <property name="transformationAnchor">
       <enum>QGraphicsView::NoAnchor</enum>
      </property>
@@ -42,6 +45,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>bg::ui::draughts::DraughtsBoardView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">ui/draughts/DraughtsBoardView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

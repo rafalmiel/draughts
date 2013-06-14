@@ -22,7 +22,10 @@ public:
 signals:
     
 public slots:
-    
+
+
+private:
+    bg::model::Move *createMove_impl() const;
 };
 
 } // namespace brazilian

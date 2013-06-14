@@ -13,6 +13,7 @@ namespace draughts {
 DraughtsBoardScene::DraughtsBoardScene(QObject *parent) :
     QGraphicsScene(parent)
 {
+
 }
 
 void DraughtsBoardScene::mousePressEvent(QGraphicsSceneMouseEvent *event)

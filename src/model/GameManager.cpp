@@ -16,7 +16,7 @@ GameManager* GameManager::instance()
     return &instance;
 }
 
-Game *GameManager::createGame(GameType type) const
+Game *GameManager::createGame(const GameType type) const
 {
     switch (type) {
     case GameType::DRAUGHTS_BRAZILIAN:

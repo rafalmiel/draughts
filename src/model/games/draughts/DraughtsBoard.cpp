@@ -16,13 +16,7 @@ Board::Board(qint32 fieldsNum, QObject *parent) :
 
 Board::~Board()
 {
-    qDebug() << "~Board()";
     foreach (Field *f, m_fields) {
-        if (f->checker()) {
-            qDebug() << "del checker";
-            delete f->checker();
-        }
-        qDebug() << "del field";
         delete f;
     }
     m_fields.clear();

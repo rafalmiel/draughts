@@ -24,7 +24,11 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    m_game->createMove();
+
     m_boardScene = new DraughtsBoardScene();
+    QGraphicsItem *itm = m_boardScene->addRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10, QPen(Qt::white));
+    itm->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
     connect(m_boardScene, SIGNAL(fieldClicked(qint32)),
             this, SLOT(slotOnFieldClicked(qint32)));
 
@@ -93,8 +97,6 @@ void BoardWidget::setupCheckersItems()
 
 
             QGraphicsSvgItem *svgChecker = new QGraphicsSvgItem(filename);
-            svgChecker->setFlag(QGraphicsItem::ItemIsMovable);
-            //svgChecker->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
             qint32 row = i % c_boardDim;
             qint32 col = i / c_boardDim;
             svgChecker->setX(row * SVG_ITEM_WIDTH);

@@ -8,5 +8,11 @@ Move::Move(QObject *parent) :
 {
 }
 
+void Move::release()
+{
+    cleanup();
+    emit released(this);
+}
+
 } // namespace model
 } // namespace bg

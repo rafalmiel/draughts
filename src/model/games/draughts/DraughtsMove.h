@@ -23,6 +23,8 @@ public:
     Field *fieldAt(qint32 ind);
     void addField(Field *field);
     QString toString() const;
+
+    void cleanup();
     
 signals:
     
