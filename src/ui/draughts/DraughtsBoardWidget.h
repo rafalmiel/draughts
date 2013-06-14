@@ -56,6 +56,7 @@ private:
     QVector<QGraphicsSvgItem *> m_fields;
     QMap<qint32, QGraphicsSvgItem *> m_checkers;
     QMap<qint32, QGraphicsRectItem *> m_clickedFields;
+    QVector<qint32> m_currentMove;
 
 
     model::draughts::Game *m_game;

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QMutex>
+#include <QVector>
 
 #include "Types.h"
 
@@ -27,15 +28,14 @@ public:
     virtual QString toString() const = 0;
 
     MovePtr createMove() const;
-    
-protected:
-    virtual Move *createMove_impl() const = 0;
 
 private slots:
     void slotMoveReleased(Move *move);
+
 private:
+    virtual Move *createMove_impl() const = 0;
     mutable QMutex m_movesPoolMutex;
-    mutable QList<Move *> m_movesPool;
+    mutable QVector<Move *> m_movesPool;
     
 };
 

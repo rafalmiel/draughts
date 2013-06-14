@@ -24,7 +24,7 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_game->createMove();
+
 
     m_boardScene = new DraughtsBoardScene();
     QGraphicsItem *itm = m_boardScene->addRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10, QPen(Qt::white));
@@ -57,6 +57,27 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
         rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
         m_boardScene->addItem(rect);
         m_clickedFields.insert(num, rect);
+
+        m_currentMove.push_back(num);
+        if (m_currentMove.size() == 2) {
+            model::draughts::MovePtr move =
+                    m_game->createMove().staticCast<model::draughts::Move>();
+            move->addField(m_game->board()->fieldAt(m_currentMove.at(0)));
+            move->addField(m_game->board()->fieldAt(m_currentMove.at(1)));
+
+            if (m_game->applyMove(move)) {
+                setupCheckersItems();
+            }
+
+            m_boardScene->removeItem(m_clickedFields[m_currentMove.at(0)]);
+            delete m_clickedFields[m_currentMove.at(0)];
+            m_clickedFields.remove(m_currentMove.at(0));
+            m_boardScene->removeItem(m_clickedFields[m_currentMove.at(1)]);
+            delete m_clickedFields[m_currentMove.at(1)];
+            m_clickedFields.remove(m_currentMove.at(1));
+
+            m_currentMove.clear();
+        }
     }
 }
 

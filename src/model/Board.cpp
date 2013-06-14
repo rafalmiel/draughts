@@ -11,6 +11,7 @@ namespace model {
 Board::Board(QObject *parent) :
     QObject(parent)
 {
+    m_movesPool.reserve(128);
 }
 
 Board::~Board()
