@@ -31,6 +31,7 @@ public:
     bg::model::draughts::Board * board() const;
 
     bool applyMove(const draughts::MovePtr &move);
+    MovesVector findAllLegalMoves() const;
 
     model::MovePtr createMove() const;
 signals:

@@ -10,6 +10,7 @@ namespace draughts {
 class Move;
 
 typedef QSharedPointer<Move> MovePtr;
+typedef QVector<MovePtr> MovesVector;
 
 enum class Player {
     WHITE,

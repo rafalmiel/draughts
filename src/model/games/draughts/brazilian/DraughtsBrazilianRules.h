@@ -25,7 +25,7 @@ public:
     bool applyMove(const MovePtr &move);
     void setBoard(Board *board);
     void beginGame();
-    QVector<bg::model::draughts::MovePtr> findAllLegalMoves();
+    MovesVector findAllLegalMoves() const;
     
 signals:
     

@@ -7,6 +7,8 @@
 #include <QResizeEvent>
 #include <QMap>
 
+#include <model/games/draughts/DraughtsTypes.h>
+
 namespace bg {
 
 namespace model {
@@ -42,7 +44,7 @@ private slots:
     void on_btnApplyMove_clicked();
 
 private:
-
+    void selectField(qint32 num, bool select = true);
 
     model::draughts::Field *stringToField(const QString &field) const;
     bool isCheckerOnBoard(bg::model::draughts::Checker *checker, qint32 fieldNum);
@@ -55,8 +57,12 @@ private:
 
     QVector<QGraphicsSvgItem *> m_fields;
     QMap<qint32, QGraphicsSvgItem *> m_checkers;
+
     QMap<qint32, QGraphicsRectItem *> m_clickedFields;
-    QVector<qint32> m_currentMove;
+
+    QVector<qint32> m_currentSelection;
+    model::draughts::MovesVector m_legalMoves;
+    model::draughts::MovesVector m_currentMoves;
 
 
     model::draughts::Game *m_game;

@@ -27,6 +27,11 @@ Game::~Game()
     delete m_board;
 }
 
+MovesVector Game::findAllLegalMoves() const
+{
+    return qMove(m_rules->findAllLegalMoves());
+}
+
 model::MovePtr Game::createMove() const
 {
     return m_board->createMove();

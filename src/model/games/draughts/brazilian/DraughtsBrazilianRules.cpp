@@ -89,9 +89,9 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
     return false;
 }
 
-QVector<bg::model::draughts::MovePtr> Rules::findAllLegalMoves()
+MovesVector Rules::findAllLegalMoves() const
 {
-    QVector<bg::model::draughts::MovePtr> movesVec;
+    MovesVector movesVec;
     int colDir =
             (m_whoseTurn == Player::BLACK) ?
                 1:-1;
@@ -125,11 +125,7 @@ QVector<bg::model::draughts::MovePtr> Rules::findAllLegalMoves()
         }
     }
 
-    foreach (bg::model::draughts::MovePtr ptr, movesVec) {
-        qDebug() << ptr->toString();
-    }
-
-    return movesVec;
+    return qMove(movesVec);
 }
 
 } // namespace brazilian

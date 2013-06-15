@@ -24,8 +24,6 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-
     m_boardScene = new DraughtsBoardScene();
     QGraphicsItem *itm = m_boardScene->addRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10, QPen(Qt::white));
     itm->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
@@ -36,14 +34,111 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
     setupCheckersItems();
 
     ui->gvBoard->setScene(m_boardScene);
+
+    m_legalMoves = m_game->findAllLegalMoves();
+}
+
+void BoardWidget::selectField(qint32 num, bool select)
+{
+    if (select) {
+        qint32 row = num % c_boardDim;
+        qint32 col = num / c_boardDim;
+
+        QGraphicsRectItem *rect = new QGraphicsRectItem(
+                    QRect(row * SVG_ITEM_WIDTH,
+                          col * SVG_ITEM_WIDTH,
+                          SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
+
+        rect->setPen(QPen(QBrush(Qt::black), 5));
+        rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
+        m_boardScene->addItem(rect);
+        m_clickedFields.insert(num, rect);
+    } else {
+        if (m_clickedFields.contains(num)) {
+            m_boardScene->removeItem(m_clickedFields[num]);
+            delete m_clickedFields[num];
+            m_clickedFields.remove(num);
+        }
+    }
 }
 
 void BoardWidget::slotOnFieldClicked(qint32 num)
 {
-    if (m_clickedFields.contains(num)) {
+    if (!m_currentSelection.contains(num)) {
+        qint32 ind = m_currentSelection.size();
+        model::draughts::MovesVector &mvContainer =
+                (ind == 0) ? m_legalMoves : m_currentMoves;
+
+        qDebug() << "ind: " << ind;
+
+        bool incMoveInd = false;
+
+        for (const model::draughts::MovePtr &move : mvContainer) {
+            if (move->size() > ind) {
+                if (move->fieldAt(ind)->fieldId() == num) {
+                    //select field
+
+                    if (ind == 0) {
+                        qDebug() << "available move: " << move->toString();
+                        incMoveInd = true;
+                        m_currentMoves.push_back(move);
+                    }
+
+                    if (ind == move->size() - 1) {
+                        if (m_game->applyMove(move)) {
+                            setupCheckersItems();
+
+                            m_currentMoves.clear();
+                            m_legalMoves = m_game->findAllLegalMoves();
+                            for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
+                                selectField(m_currentSelection[i], false);
+                            }
+                            m_currentSelection.clear();
+                        }
+
+                         return;
+                    }
+                }
+            }
+        }
+
+        if (incMoveInd) {
+            m_currentSelection.push_back(num);
+            selectField(num);
+        }
+    } else {
+        qint32 pos = m_currentSelection.indexOf(num);
+        for (qint32 i = pos; i < m_currentSelection.size(); ++i) {
+            selectField(m_currentSelection[i], false);
+        }
+        m_currentSelection.erase(m_currentSelection.begin() + pos, m_currentSelection.end());
+        qDebug() << "Cur sel: " << m_currentSelection;
+        m_currentMoves.clear();
+        if (m_currentSelection.size() > 0) {
+            for (const model::draughts::MovePtr &move : m_legalMoves) {
+                if (move->size() >= m_currentSelection.size()) {
+                    bool moveOk = true;
+                    for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
+                        if (move->fieldAt(i)->fieldId() != m_currentSelection.at(i)) {
+                            moveOk = false;
+                            break;
+                        }
+                    }
+                    if (moveOk) {
+                        qDebug() << "ins move" << move->toString();
+                        m_currentMoves.push_back(move);
+                    }
+                }
+            }
+        }
+    }
+
+    /*if (m_clickedFields.contains(num)) {
         m_boardScene->removeItem(m_clickedFields[num]);
         delete m_clickedFields[num];
         m_clickedFields.remove(num);
+
+        m_currentMove.remove(m_currentMove.indexOf(num));
     } else {
         qint32 row = num % c_boardDim;
         qint32 col = num / c_boardDim;
@@ -78,7 +173,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
 
             m_currentMove.clear();
         }
-    }
+    }*/
 }
 
 QString BoardWidget::filenameByChecker(model::draughts::Checker *checker)

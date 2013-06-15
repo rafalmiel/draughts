@@ -19,6 +19,7 @@ public:
     virtual void beginGame() = 0;
     virtual bg::model::draughts::Board * board() const = 0;
     virtual bool applyMove(const MovePtr &move) = 0;
+    virtual MovesVector findAllLegalMoves() const = 0;
     
 signals:
     
