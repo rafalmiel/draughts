@@ -26,14 +26,19 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 
     m_boardScene = new DraughtsBoardScene();
     QGraphicsItem *itm = m_boardScene->addRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10, QPen(Qt::white));
-    itm->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
+    itm->grabMouse();
+    itm->setData(toInt(ItemKey::Type), toInt(ItemType::Selection));
     connect(m_boardScene, SIGNAL(fieldClicked(qint32)),
             this, SLOT(slotOnFieldClicked(qint32)));
+    connect(m_boardScene, SIGNAL(fieldHovered(qint32)),
+            this, SLOT(slotOnFieldHovered(qint32)));
 
     setupBoard();
     setupCheckersItems();
 
     ui->gvBoard->setScene(m_boardScene);
+    ui->gvBoard->setMouseTracking(true);
+
 
     m_legalMoves = m_game->findAllLegalMoves();
 }
@@ -50,7 +55,7 @@ void BoardWidget::selectField(qint32 num, bool select)
                           SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
 
         rect->setPen(QPen(QBrush(Qt::black), 5));
-        rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
+        rect->setData(toInt(ItemKey::Type), toInt(ItemType::Selection));
         m_boardScene->addItem(rect);
         m_clickedFields.insert(num, rect);
     } else {
@@ -62,14 +67,17 @@ void BoardWidget::selectField(qint32 num, bool select)
     }
 }
 
+void BoardWidget::slotOnFieldHovered(qint32 field)
+{
+    qDebug() << "field hovered" << m_game->board()->fieldAt(field)->toString();
+}
+
 void BoardWidget::slotOnFieldClicked(qint32 num)
 {
     if (!m_currentSelection.contains(num)) {
         qint32 ind = m_currentSelection.size();
         model::draughts::MovesVector &mvContainer =
                 (ind == 0) ? m_legalMoves : m_currentMoves;
-
-        qDebug() << "ind: " << ind;
 
         bool incMoveInd = false;
 
@@ -79,7 +87,6 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                     //select field
 
                     if (ind == 0) {
-                        qDebug() << "available move: " << move->toString();
                         incMoveInd = true;
                         m_currentMoves.push_back(move);
                     }
@@ -112,7 +119,6 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
             selectField(m_currentSelection[i], false);
         }
         m_currentSelection.erase(m_currentSelection.begin() + pos, m_currentSelection.end());
-        qDebug() << "Cur sel: " << m_currentSelection;
         m_currentMoves.clear();
         if (m_currentSelection.size() > 0) {
             for (const model::draughts::MovePtr &move : m_legalMoves) {
@@ -125,55 +131,12 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                         }
                     }
                     if (moveOk) {
-                        qDebug() << "ins move" << move->toString();
                         m_currentMoves.push_back(move);
                     }
                 }
             }
         }
     }
-
-    /*if (m_clickedFields.contains(num)) {
-        m_boardScene->removeItem(m_clickedFields[num]);
-        delete m_clickedFields[num];
-        m_clickedFields.remove(num);
-
-        m_currentMove.remove(m_currentMove.indexOf(num));
-    } else {
-        qint32 row = num % c_boardDim;
-        qint32 col = num / c_boardDim;
-
-        QGraphicsRectItem *rect = new QGraphicsRectItem(
-                    QRect(row * SVG_ITEM_WIDTH,
-                          col * SVG_ITEM_WIDTH,
-                          SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
-
-        rect->setPen(QPen(QBrush(Qt::black), 5));
-        rect->setData(toInt(SvgKeys::Type), toInt(ItemType::Selection));
-        m_boardScene->addItem(rect);
-        m_clickedFields.insert(num, rect);
-
-        m_currentMove.push_back(num);
-        if (m_currentMove.size() == 2) {
-            model::draughts::MovePtr move =
-                    m_game->createMove().staticCast<model::draughts::Move>();
-            move->addField(m_game->board()->fieldAt(m_currentMove.at(0)));
-            move->addField(m_game->board()->fieldAt(m_currentMove.at(1)));
-
-            if (m_game->applyMove(move)) {
-                setupCheckersItems();
-            }
-
-            m_boardScene->removeItem(m_clickedFields[m_currentMove.at(0)]);
-            delete m_clickedFields[m_currentMove.at(0)];
-            m_clickedFields.remove(m_currentMove.at(0));
-            m_boardScene->removeItem(m_clickedFields[m_currentMove.at(1)]);
-            delete m_clickedFields[m_currentMove.at(1)];
-            m_clickedFields.remove(m_currentMove.at(1));
-
-            m_currentMove.clear();
-        }
-    }*/
 }
 
 QString BoardWidget::filenameByChecker(model::draughts::Checker *checker)
@@ -217,8 +180,8 @@ void BoardWidget::setupCheckersItems()
             qint32 col = i / c_boardDim;
             svgChecker->setX(row * SVG_ITEM_WIDTH);
             svgChecker->setY(col * SVG_ITEM_WIDTH);
-            svgChecker->setData(toInt(SvgKeys::Type), toInt(ItemType::Checker));
-            svgChecker->setData(toInt(SvgKeys::CheckerColor), toInt(checker->color()));
+            svgChecker->setData(toInt(ItemKey::Type), toInt(ItemType::Checker));
+            svgChecker->setData(toInt(ItemKey::CheckerColor), toInt(checker->color()));
 
             removeCheckerAt(i);
 
@@ -243,8 +206,8 @@ void BoardWidget::setupBoard()
         QGraphicsSvgItem *item = new QGraphicsSvgItem(file);
         item->setX(row * SVG_ITEM_WIDTH);
         item->setY(col * SVG_ITEM_WIDTH);
-        item->setData(toInt(SvgKeys::Type), toInt(ItemType::Field));
-        item->setData(toInt(SvgKeys::FieldNum), i);
+        item->setData(toInt(ItemKey::Type), toInt(ItemType::Field));
+        item->setData(toInt(ItemKey::FieldNum), i);
         m_fields.push_back(item);
         m_boardScene->addItem(item);
     }

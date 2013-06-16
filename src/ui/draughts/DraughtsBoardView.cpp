@@ -1,5 +1,7 @@
 #include "DraughtsBoardView.h"
 
+#include <QDebug>
+
 namespace bg {
 namespace ui {
 namespace draughts {

@@ -15,12 +15,13 @@ public:
     
 signals:
     void fieldClicked(qint32 fieldNum);
+    void fieldHovered(qint32 fieldNum);
 
 public slots:
 
 private:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 };
 
 } // namespace draughts

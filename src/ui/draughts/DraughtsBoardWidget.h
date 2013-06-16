@@ -41,6 +41,7 @@ public:
     void removeCheckerAt(int i);
 private slots:
     void slotOnFieldClicked(qint32);
+    void slotOnFieldHovered(qint32);
     void on_btnApplyMove_clicked();
 
 private:
@@ -52,6 +53,7 @@ private:
     void setupCheckersItems();
     void resizeEvent(QResizeEvent *);
     Ui::BoardWidget *ui;
+
 
     DraughtsBoardScene *m_boardScene;
 

@@ -7,7 +7,7 @@ namespace bg {
 namespace ui {
 namespace draughts {
 
-enum class SvgKeys {
+enum class ItemKey {
     Type = 0,
     FieldNum = 1,
     CheckerColor = 2

@@ -16,12 +16,22 @@ DraughtsBoardScene::DraughtsBoardScene(QObject *parent) :
 
 }
 
+void DraughtsBoardScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QList<QGraphicsItem *> itms = items(event->scenePos());
+    foreach (const QGraphicsItem *itm, itms) {
+        if (itm->data(toInt(ItemKey::Type)).toInt() == toInt(ItemType::Field)) {
+            emit fieldHovered(itm->data(toInt(ItemKey::FieldNum)).toInt());
+        }
+    }
+}
+
 void DraughtsBoardScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QList<QGraphicsItem *> itms = items(event->scenePos());
     foreach (const QGraphicsItem *itm, itms) {
-        if (itm->data(toInt(SvgKeys::Type)).toInt() == toInt(ItemType::Field)) {
-            emit fieldClicked(itm->data(toInt(SvgKeys::FieldNum)).toInt());
+        if (itm->data(toInt(ItemKey::Type)).toInt() == toInt(ItemType::Field)) {
+            emit fieldClicked(itm->data(toInt(ItemKey::FieldNum)).toInt());
         }
     }
 }

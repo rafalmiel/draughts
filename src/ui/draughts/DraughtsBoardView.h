@@ -2,6 +2,7 @@
 #define BG_UI_DRAUGHTS_DRAUGHTSBOARDVIEW_H
 
 #include <QGraphicsView>
+#include <QMouseEvent>
 
 namespace bg {
 namespace ui {
@@ -12,7 +13,6 @@ class DraughtsBoardView : public QGraphicsView
     Q_OBJECT
 public:
     explicit DraughtsBoardView(QWidget *parent = 0);
-    
 signals:
     
 public slots:
