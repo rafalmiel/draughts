@@ -13,6 +13,7 @@ class DraughtsBoardView : public QGraphicsView
     Q_OBJECT
 public:
     explicit DraughtsBoardView(QWidget *parent = 0);
+
 signals:
     
 public slots:

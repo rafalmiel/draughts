@@ -29,7 +29,7 @@ Game::~Game()
 
 MovesVector Game::findAllLegalMoves() const
 {
-    return qMove(m_rules->findAllLegalMoves());
+    return std::move(m_rules->findAllLegalMoves());
 }
 
 model::MovePtr Game::createMove() const

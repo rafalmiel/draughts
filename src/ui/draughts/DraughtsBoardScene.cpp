@@ -24,6 +24,7 @@ void DraughtsBoardScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             emit fieldHovered(itm->data(toInt(ItemKey::FieldNum)).toInt());
         }
     }
+    QGraphicsScene::mouseMoveEvent(event);
 }
 
 void DraughtsBoardScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -34,6 +35,7 @@ void DraughtsBoardScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit fieldClicked(itm->data(toInt(ItemKey::FieldNum)).toInt());
         }
     }
+    QGraphicsScene::mousePressEvent(event);
 }
 
 } // namespace draughts

@@ -125,7 +125,7 @@ MovesVector Rules::findAllLegalMoves() const
         }
     }
 
-    return qMove(movesVec);
+    return std::move(movesVec);
 }
 
 } // namespace brazilian

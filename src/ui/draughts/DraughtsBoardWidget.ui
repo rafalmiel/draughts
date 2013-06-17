@@ -38,9 +38,6 @@
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
-     <property name="transformationAnchor">
-      <enum>QGraphicsView::NoAnchor</enum>
-     </property>
     </widget>
    </item>
   </layout>

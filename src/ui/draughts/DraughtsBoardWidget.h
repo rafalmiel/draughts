@@ -42,7 +42,6 @@ public:
 private slots:
     void slotOnFieldClicked(qint32);
     void slotOnFieldHovered(qint32);
-    void on_btnApplyMove_clicked();
 
 private:
     void selectField(qint32 num, bool select = true);
@@ -65,6 +64,8 @@ private:
     QVector<qint32> m_currentSelection;
     model::draughts::MovesVector m_legalMoves;
     model::draughts::MovesVector m_currentMoves;
+
+    qint32 m_hoveredField;
 
 
     model::draughts::Game *m_game;

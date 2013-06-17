@@ -20,14 +20,13 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
     m_boardScene(nullptr),
     m_game(game),
     c_fieldsNum(m_game->board()->fieldsNum()),
-    c_boardDim(qSqrt(c_fieldsNum))
+    c_boardDim(qSqrt(c_fieldsNum)),
+    m_hoveredField(-1)
 {
     ui->setupUi(this);
 
     m_boardScene = new DraughtsBoardScene();
-    QGraphicsItem *itm = m_boardScene->addRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10, QPen(Qt::white));
-    itm->grabMouse();
-    itm->setData(toInt(ItemKey::Type), toInt(ItemType::Selection));
+    m_boardScene->setSceneRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10);
     connect(m_boardScene, SIGNAL(fieldClicked(qint32)),
             this, SLOT(slotOnFieldClicked(qint32)));
     connect(m_boardScene, SIGNAL(fieldHovered(qint32)),
@@ -46,18 +45,20 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
 void BoardWidget::selectField(qint32 num, bool select)
 {
     if (select) {
-        qint32 row = num % c_boardDim;
-        qint32 col = num / c_boardDim;
+        if (!m_clickedFields.contains(num)) {
+            qint32 row = num % c_boardDim;
+            qint32 col = num / c_boardDim;
 
-        QGraphicsRectItem *rect = new QGraphicsRectItem(
-                    QRect(row * SVG_ITEM_WIDTH,
-                          col * SVG_ITEM_WIDTH,
-                          SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
+            QGraphicsRectItem *rect = new QGraphicsRectItem(
+                        QRect(row * SVG_ITEM_WIDTH,
+                              col * SVG_ITEM_WIDTH,
+                              SVG_ITEM_WIDTH, SVG_ITEM_WIDTH));
 
-        rect->setPen(QPen(QBrush(Qt::black), 5));
-        rect->setData(toInt(ItemKey::Type), toInt(ItemType::Selection));
-        m_boardScene->addItem(rect);
-        m_clickedFields.insert(num, rect);
+            rect->setPen(QPen(QBrush(Qt::black), 5));
+            rect->setData(toInt(ItemKey::Type), toInt(ItemType::Selection));
+            m_boardScene->addItem(rect);
+            m_clickedFields.insert(num, rect);
+        }
     } else {
         if (m_clickedFields.contains(num)) {
             m_boardScene->removeItem(m_clickedFields[num]);
@@ -69,7 +70,18 @@ void BoardWidget::selectField(qint32 num, bool select)
 
 void BoardWidget::slotOnFieldHovered(qint32 field)
 {
-    qDebug() << "field hovered" << m_game->board()->fieldAt(field)->toString();
+    if (m_hoveredField != field && m_hoveredField >= 0) {
+        if (!m_currentSelection.contains(m_hoveredField))
+            selectField(m_hoveredField, false);
+    }
+    m_hoveredField = field;
+    if (m_game->board()->fieldAt(m_hoveredField)->checker() != nullptr) {
+        for (const model::draughts::MovePtr &move : m_legalMoves) {
+            if (move->fieldAt(0)->fieldId() == m_hoveredField) {
+                selectField(m_hoveredField, true);
+            }
+        }
+    }
 }
 
 void BoardWidget::slotOnFieldClicked(qint32 num)
@@ -95,7 +107,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                         if (m_game->applyMove(move)) {
                             setupCheckersItems();
 
-                            m_currentMoves.clear();
+                            BoardWidget::m_currentMoves.clear();
                             m_legalMoves = m_game->findAllLegalMoves();
                             for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
                                 selectField(m_currentSelection[i], false);
@@ -173,9 +185,8 @@ void BoardWidget::setupCheckersItems()
         if (checker && !isCheckerOnBoard(checker, i)) {
             QString filename = filenameByChecker(checker);
 
-
-
             QGraphicsSvgItem *svgChecker = new QGraphicsSvgItem(filename);
+
             qint32 row = i % c_boardDim;
             qint32 col = i / c_boardDim;
             svgChecker->setX(row * SVG_ITEM_WIDTH);
@@ -230,20 +241,6 @@ model::draughts::Field *BoardWidget::stringToField(const QString &field) const
     }
 
     return nullptr;
-}
-
-void BoardWidget::on_btnApplyMove_clicked()
-{
-    //for testing purposes..
-    QString strMove = ui->edMove->text();
-    QStringList splitMove = strMove.split("-");
-    bg::model::draughts::MovePtr mov(new bg::model::draughts::Move());
-    foreach (const QString &str, splitMove) {
-        mov->addField(stringToField(str));
-    }
-    if (m_game->applyMove(mov)) {
-        setupCheckersItems();
-    }
 }
 
 BoardWidget::~BoardWidget()
