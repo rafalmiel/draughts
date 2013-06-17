@@ -39,7 +39,7 @@ void Board::initialise()
      */
     for (qint32 i = 0; i < m_fieldsNum; ++i) {
         m_fields.push_back(static_cast<bg::model::draughts::Field*>(createField()));
-        m_fields.back()->setFieldId(i);
+        m_fields.back()->setNum(i);
     }
 }
 

@@ -68,8 +68,8 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
                     int colDir =
                             (m_whoseTurn == Player::BLACK) ?
                                 1:-1;
-                    qint32 f1 = move->fieldAt(0)->fieldId();
-                    qint32 f2 = move->fieldAt(1)->fieldId();
+                    qint32 f1 = move->fieldAt(0)->num();
+                    qint32 f2 = move->fieldAt(1)->num();
                     qint32 r1 = f1 % 8;
                     qint32 c1 = f1 / 8;
                     qint32 r2 = f2 % 8;

@@ -6,19 +6,19 @@ namespace draughts {
 
 Field::Field(QObject *parent) :
     bg::model::Field(parent),
-    m_fieldId(0),
+    m_fieldNum(0),
     m_checker(nullptr)
 {
 }
 
-void Field::setFieldId(qint32 id)
+void Field::setNum(qint32 id)
 {
-    m_fieldId = id;
+    m_fieldNum = id;
 }
 
-qint32 Field::fieldId() const
+qint32 Field::num() const
 {
-    return m_fieldId;
+    return m_fieldNum;
 }
 
 void Field::setChecker(Checker *checker)

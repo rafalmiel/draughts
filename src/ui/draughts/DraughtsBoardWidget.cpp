@@ -18,15 +18,15 @@ BoardWidget::BoardWidget(model::draughts::Game *game, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::BoardWidget),
     m_boardScene(nullptr),
+    m_hoveredField(-1),
     m_game(game),
     c_fieldsNum(m_game->board()->fieldsNum()),
-    c_boardDim(qSqrt(c_fieldsNum)),
-    m_hoveredField(-1)
+    c_boardDim(qSqrt(c_fieldsNum))
 {
     ui->setupUi(this);
 
     m_boardScene = new DraughtsBoardScene();
-    m_boardScene->setSceneRect(-5, -5, SVG_ITEM_WIDTH * c_boardDim + 10, SVG_ITEM_WIDTH * c_boardDim + 10);
+    m_boardScene->setSceneRect(0, 0, SVG_ITEM_WIDTH * c_boardDim, SVG_ITEM_WIDTH * c_boardDim);
     connect(m_boardScene, SIGNAL(fieldClicked(qint32)),
             this, SLOT(slotOnFieldClicked(qint32)));
     connect(m_boardScene, SIGNAL(fieldHovered(qint32)),
@@ -77,7 +77,14 @@ void BoardWidget::slotOnFieldHovered(qint32 field)
     m_hoveredField = field;
     if (m_game->board()->fieldAt(m_hoveredField)->checker() != nullptr) {
         for (const model::draughts::MovePtr &move : m_legalMoves) {
-            if (move->fieldAt(0)->fieldId() == m_hoveredField) {
+            if (move->fieldAt(0)->num() == m_hoveredField) {
+                selectField(m_hoveredField, true);
+            }
+        }
+    } else {
+        qint32 ind = m_currentSelection.size();
+        for (const model::draughts::MovePtr &move : m_currentMoves) {
+            if (move->size() > ind && move->fieldAt(ind)->num() == m_hoveredField) {
                 selectField(m_hoveredField, true);
             }
         }
@@ -87,6 +94,19 @@ void BoardWidget::slotOnFieldHovered(qint32 field)
 void BoardWidget::slotOnFieldClicked(qint32 num)
 {
     if (!m_currentSelection.contains(num)) {
+        for (const model::draughts::MovePtr &move : m_legalMoves) {
+            if (move->fieldAt(0)->num() == m_hoveredField) {
+                m_currentMoves.clear();
+                m_legalMoves = m_game->findAllLegalMoves();
+                for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
+                    selectField(m_currentSelection[i], false);
+                }
+                m_currentSelection.clear();
+                break;
+            }
+        }
+
+
         qint32 ind = m_currentSelection.size();
         model::draughts::MovesVector &mvContainer =
                 (ind == 0) ? m_legalMoves : m_currentMoves;
@@ -95,7 +115,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
 
         for (const model::draughts::MovePtr &move : mvContainer) {
             if (move->size() > ind) {
-                if (move->fieldAt(ind)->fieldId() == num) {
+                if (move->fieldAt(ind)->num() == num) {
                     //select field
 
                     if (ind == 0) {
@@ -107,7 +127,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                         if (m_game->applyMove(move)) {
                             setupCheckersItems();
 
-                            BoardWidget::m_currentMoves.clear();
+                            m_currentMoves.clear();
                             m_legalMoves = m_game->findAllLegalMoves();
                             for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
                                 selectField(m_currentSelection[i], false);
@@ -137,7 +157,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                 if (move->size() >= m_currentSelection.size()) {
                     bool moveOk = true;
                     for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
-                        if (move->fieldAt(i)->fieldId() != m_currentSelection.at(i)) {
+                        if (move->fieldAt(i)->num() != m_currentSelection.at(i)) {
                             moveOk = false;
                             break;
                         }

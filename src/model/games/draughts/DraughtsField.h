@@ -15,8 +15,8 @@ class Field : public bg::model::Field
 public:
     explicit Field(QObject *parent = 0);
 
-    void setFieldId(qint32 id);
-    qint32 fieldId() const;
+    void setNum(qint32 id);
+    qint32 num() const;
 
     void setChecker(Checker *checker);
     Checker *checker() const;
@@ -26,7 +26,7 @@ signals:
 public slots:
 
 protected:
-    qint32 m_fieldId;
+    qint32 m_fieldNum;
 
     Checker *m_checker;
     
