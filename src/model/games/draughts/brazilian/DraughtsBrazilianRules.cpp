@@ -80,6 +80,18 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
                         m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
                         findAllLegalMoves();
                         return true;
+                    } else if ((qAbs(r1 - r2) == 2) && (qAbs(c1 - c2) == 2)) {
+                        qint32 rmid = (r1 + r2) / 2;
+                        qint32 cmid = (c1 + c2) / 2;
+                        Checker *opp = m_board->fieldAt(rmid + cmid*8)->checker();
+                        if (opp && opp->color() != m_whoseTurn) {
+                            m_board->fieldAt(rmid + cmid*8)->setChecker(nullptr);
+                            move->fieldAt(1)->setChecker(checker);
+                            move->fieldAt(0)->setChecker(nullptr);
+                            m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
+                            findAllLegalMoves();
+                            return true;
+                        }
                     }
                 }
             }
@@ -87,6 +99,40 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
     }
 
     return false;
+}
+
+#define IN_RANGE(f) ((f >= 0) && (f < 8))
+
+void Rules::findAllTakeAways(qint32 field, MovesVector &movesVec) const
+{
+    qint32 row = field % 8;
+    qint32 col = field / 8;
+    draughts::Checker *cur = m_board->fieldAt(row + 8*col)->checker();
+    if (cur != nullptr && cur->color() == m_whoseTurn) {
+        if (row >= 0 && row < 8 && col >= 0 && col < 8) {
+            qint32 row1[] = {row + 1, row - 1};
+            qint32 col1[] = {col + 1, col - 1};
+            qint32 row2[] = {row + 2, row - 2};
+            qint32 col2[] = {col + 2, col - 2};
+            for (int r = 0; r < 2; ++r) {
+                for (int c = 0; c < 2; ++c) {
+                    if (IN_RANGE(row1[r]) && IN_RANGE(row2[r]) &&
+                        IN_RANGE(col1[c]) && IN_RANGE(col2[c])) {
+                        draughts::Checker *opp = m_board->fieldAt(row1[r] + 8*col1[c])->checker();
+                        draughts::Checker *cap = m_board->fieldAt(row2[r] + 8*col2[c])->checker();
+                        if (opp && opp->color() != m_whoseTurn && cap == nullptr) {
+                            bg::model::draughts::MovePtr move =
+                                    m_board->createMove().staticCast<bg::model::draughts::Move>();
+                            move->addField(m_board->fieldAt(row + 8*col));
+                            move->addField(m_board->fieldAt(row2[r] + 8*col2[c]));
+                            movesVec.push_back(move);
+                            qDebug() << "found takeway" << move->toString();
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 MovesVector Rules::findAllLegalMoves() const
@@ -97,30 +143,36 @@ MovesVector Rules::findAllLegalMoves() const
                 1:-1;
 
     for (int i = 0; i < 64; ++i) {
-        draughts::Checker *checker = m_board->checkerAt(i);
-        if (checker && checker->color() == m_whoseTurn) {
-            int row = i % 8;
-            int col = i / 8;
-            int nrow = row + 1;
-            int nrow2 = row - 1;
-            int ncol = col + colDir;
-            if (ncol >= 0 && ncol < 8) {
-                if (nrow >= 0 && nrow < 8)
-                    if (!m_board->checkerAt(nrow + ncol * 8)) {
-                        bg::model::draughts::MovePtr move =
-                                m_board->createMove().staticCast<bg::model::draughts::Move>();
-                        move->addField(m_board->fieldAt(row + col * 8));
-                        move->addField(m_board->fieldAt(nrow + ncol * 8));
-                        movesVec.push_back(move);
-                    }
-                if (nrow2 >= 0 && nrow2 < 8)
-                    if (!m_board->checkerAt(nrow2 + ncol * 8)) {
-                        bg::model::draughts::MovePtr move =
-                                m_board->createMove().staticCast<bg::model::draughts::Move>();
-                        move->addField(m_board->fieldAt(row + col * 8));
-                        move->addField(m_board->fieldAt(nrow2 + ncol * 8));
-                        movesVec.push_back(move);
-                    }
+        findAllTakeAways(i, movesVec);
+    }
+
+    if (movesVec.size() == 0) {
+        for (int i = 0; i < 64; ++i) {
+            draughts::Checker *checker = m_board->checkerAt(i);
+            if (checker && checker->color() == m_whoseTurn) {
+                int row = i % 8;
+                int col = i / 8;
+                int nrow = row + 1;
+                int nrow2 = row - 1;
+                int ncol = col + colDir;
+                if (ncol >= 0 && ncol < 8) {
+                    if (nrow >= 0 && nrow < 8)
+                        if (!m_board->checkerAt(nrow + ncol * 8)) {
+                            bg::model::draughts::MovePtr move =
+                                    m_board->createMove().staticCast<bg::model::draughts::Move>();
+                            move->addField(m_board->fieldAt(row + col * 8));
+                            move->addField(m_board->fieldAt(nrow + ncol * 8));
+                            movesVec.push_back(move);
+                        }
+                    if (nrow2 >= 0 && nrow2 < 8)
+                        if (!m_board->checkerAt(nrow2 + ncol * 8)) {
+                            bg::model::draughts::MovePtr move =
+                                    m_board->createMove().staticCast<bg::model::draughts::Move>();
+                            move->addField(m_board->fieldAt(row + col * 8));
+                            move->addField(m_board->fieldAt(nrow2 + ncol * 8));
+                            movesVec.push_back(move);
+                        }
+                }
             }
         }
     }

@@ -26,6 +26,7 @@ public:
     void setBoard(Board *board);
     void beginGame();
     MovesVector findAllLegalMoves() const;
+    void findAllTakeAways(qint32 field, MovesVector &movesVec) const;
     
 signals:
     
