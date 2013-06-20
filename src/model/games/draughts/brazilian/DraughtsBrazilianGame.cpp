@@ -47,7 +47,7 @@ void Game::beginGame()
     m_rules->setBoard(m_board);
     m_rules->beginGame();
 
-    m_rules->findAllLegalMoves();
+    //m_rules->findAllLegalMoves();
 }
 
 bool Game::applyMove(const draughts::MovePtr &move)

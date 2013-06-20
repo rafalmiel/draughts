@@ -78,7 +78,6 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
                         move->fieldAt(1)->setChecker(checker);
                         move->fieldAt(0)->setChecker(nullptr);
                         m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
-                        findAllLegalMoves();
                         return true;
                     } else if ((qAbs(r1 - r2) == 2) && (qAbs(c1 - c2) == 2)) {
                         qint32 rmid = (r1 + r2) / 2;
@@ -89,7 +88,6 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
                             move->fieldAt(1)->setChecker(checker);
                             move->fieldAt(0)->setChecker(nullptr);
                             m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
-                            findAllLegalMoves();
                             return true;
                         }
                     }

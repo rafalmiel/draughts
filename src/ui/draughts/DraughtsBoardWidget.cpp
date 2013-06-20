@@ -97,7 +97,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
         for (const model::draughts::MovePtr &move : m_legalMoves) {
             if (move->fieldAt(0)->num() == m_hoveredField) {
                 m_currentMoves.clear();
-                m_legalMoves = m_game->findAllLegalMoves();
+                //m_legalMoves = m_game->findAllLegalMoves();
                 for (qint32 i = 0; i < m_currentSelection.size(); ++i) {
                     selectField(m_currentSelection[i], false);
                 }
