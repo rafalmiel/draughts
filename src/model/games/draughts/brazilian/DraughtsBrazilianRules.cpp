@@ -64,34 +64,34 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
         Checker *checker = move->fieldAt(0)->checker();
         if (checker && checker->color() == m_whoseTurn) {
             if (move->size() > 1) {
-                if (!move->fieldAt(1)->checker()) {
-                    int colDir =
-                            (m_whoseTurn == Player::BLACK) ?
-                                1:-1;
-                    qint32 f1 = move->fieldAt(0)->num();
-                    qint32 f2 = move->fieldAt(1)->num();
-                    qint32 r1 = f1 % 8;
-                    qint32 c1 = f1 / 8;
-                    qint32 r2 = f2 % 8;
-                    qint32 c2 = f2 / 8;
-                    if (c2 == c1 + colDir && (qAbs(r1 - r2) == 1)) {
-                        move->fieldAt(1)->setChecker(checker);
-                        move->fieldAt(0)->setChecker(nullptr);
-                        m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
-                        return true;
-                    } else if ((qAbs(r1 - r2) == 2) && (qAbs(c1 - c2) == 2)) {
-                        qint32 rmid = (r1 + r2) / 2;
-                        qint32 cmid = (c1 + c2) / 2;
-                        Checker *opp = m_board->fieldAt(rmid + cmid*8)->checker();
-                        if (opp && opp->color() != m_whoseTurn) {
-                            m_board->fieldAt(rmid + cmid*8)->setChecker(nullptr);
-                            move->fieldAt(1)->setChecker(checker);
-                            move->fieldAt(0)->setChecker(nullptr);
-                            m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
-                            return true;
+                for (qint32 i = 1; i < move->size(); ++i) {
+                    if (!move->fieldAt(i)->checker()) {
+                        int colDir =
+                                (m_whoseTurn == Player::BLACK) ?
+                                    1:-1;
+                        qint32 f1 = move->fieldAt(i-1)->num();
+                        qint32 f2 = move->fieldAt(i)->num();
+                        qint32 r1 = f1 % 8;
+                        qint32 c1 = f1 / 8;
+                        qint32 r2 = f2 % 8;
+                        qint32 c2 = f2 / 8;
+                        if (c2 == c1 + colDir && (qAbs(r1 - r2) == 1)) {
+                            move->fieldAt(i)->setChecker(checker);
+                            move->fieldAt(i-1)->setChecker(nullptr);
+                        } else if ((qAbs(r1 - r2) == 2) && (qAbs(c1 - c2) == 2)) {
+                            qint32 rmid = (r1 + r2) / 2;
+                            qint32 cmid = (c1 + c2) / 2;
+                            Checker *opp = m_board->fieldAt(rmid + cmid*8)->checker();
+                            if (opp && opp->color() != m_whoseTurn) {
+                                m_board->fieldAt(rmid + cmid*8)->setChecker(nullptr);
+                                move->fieldAt(i)->setChecker(checker);
+                                move->fieldAt(i-1)->setChecker(nullptr);
+                            }
                         }
                     }
                 }
+                m_whoseTurn = (m_whoseTurn == Player::BLACK)?Player::WHITE:Player::BLACK;
+                return true;
             }
         }
     }
@@ -103,11 +103,32 @@ bool Rules::applyMove(const bg::model::draughts::MovePtr &move)
 
 void Rules::findAllTakeAways(qint32 field, MovesVector &movesVec) const
 {
-    qint32 row = field % 8;
+    if (m_board->fieldAt(field)->checker() &&
+            m_board->fieldAt(field)->checker()->color() == m_whoseTurn) {
+        FieldsVector v = takeAwayFieldsFrom(field, -1);
+        bg::model::draughts::MovePtr move =
+                m_board->createMove().staticCast<bg::model::draughts::Move>();
+
+        while (!v.isEmpty()) {
+            if (move->size() == 0) move->addField(m_board->fieldAt(field));
+
+            move->addField(v[0]);
+
+            qDebug() << "check" << v[0]->toString();
+            v = takeAwayFieldsFrom(v[0]->num(), move->fieldAt(move->size() - 2)->num());
+        }
+
+        if (move->size() > 0) {
+            qDebug() << "take away move" << move->toString();
+            movesVec.push_back(move);
+        }
+    }
+
+    /*qint32 row = field % 8;
     qint32 col = field / 8;
     draughts::Checker *cur = m_board->fieldAt(row + 8*col)->checker();
     if (cur != nullptr && cur->color() == m_whoseTurn) {
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) {
+        if (IN_RANGE(row) && IN_RANGE(col)) {
             qint32 row1[] = {row + 1, row - 1};
             qint32 col1[] = {col + 1, col - 1};
             qint32 row2[] = {row + 2, row - 2};
@@ -130,7 +151,40 @@ void Rules::findAllTakeAways(qint32 field, MovesVector &movesVec) const
                 }
             }
         }
+    }*/
+}
+
+FieldsVector Rules::takeAwayFieldsFrom(qint32 fieldNum, qint32 ignoreField) const
+{
+    FieldsVector vecRet;
+    if (fieldNum >= 0 && fieldNum < 64) {
+        Field *f = m_board->fieldAt(fieldNum);
+        //if (f->checker() && f->checker()->color() == m_whoseTurn) {
+            qint32 row = fieldNum % 8;
+            qint32 col = fieldNum / 8;
+            qint32 row1[] = {row + 1, row - 1};
+            qint32 col1[] = {col + 1, col - 1};
+            qint32 row2[] = {row + 2, row - 2};
+            qint32 col2[] = {col + 2, col - 2};
+            for (int r = 0; r < 2; ++r) {
+                for (int c = 0; c < 2; ++c) {
+                    if (IN_RANGE(row1[r]) && IN_RANGE(row2[r]) &&
+                        IN_RANGE(col1[c]) && IN_RANGE(col2[c]) &&
+                        (ignoreField != (col2[c]*8 + row2[r]))) {
+
+                        qDebug() << "ignore field" << ignoreField << (col2[c]*8 + row2[r]);
+
+                        draughts::Checker *opp = m_board->fieldAt(row1[r] + 8*col1[c])->checker();
+                        draughts::Checker *cap = m_board->fieldAt(row2[r] + 8*col2[c])->checker();
+                        if (opp && opp->color() != m_whoseTurn && cap == nullptr) {
+                            vecRet.push_back(m_board->fieldAt(row2[r] + 8*col2[c]));
+                        }
+                    }
+                }
+            }
+        //}
     }
+    return vecRet;
 }
 
 MovesVector Rules::findAllLegalMoves() const
@@ -177,6 +231,8 @@ MovesVector Rules::findAllLegalMoves() const
 
     return std::move(movesVec);
 }
+
+#undef IN_RANGE
 
 } // namespace brazilian
 } // namespace draughts

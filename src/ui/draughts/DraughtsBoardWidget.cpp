@@ -116,7 +116,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
         for (const model::draughts::MovePtr &move : mvContainer) {
             if (move->size() > ind) {
                 if (move->fieldAt(ind)->num() == num) {
-                    //select field
+                    selectField(num);
 
                     if (ind == 0) {
                         incMoveInd = true;
@@ -136,7 +136,7 @@ void BoardWidget::slotOnFieldClicked(qint32 num)
                         }
 
                          return;
-                    }
+                    } else incMoveInd = true;
                 }
             }
         }

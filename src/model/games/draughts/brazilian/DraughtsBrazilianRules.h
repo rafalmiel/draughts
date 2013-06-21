@@ -25,6 +25,7 @@ public:
     bool applyMove(const MovePtr &move);
     void setBoard(Board *board);
     void beginGame();
+    FieldsVector takeAwayFieldsFrom(qint32 fieldNum, qint32 ignoreField) const;
     MovesVector findAllLegalMoves() const;
     void findAllTakeAways(qint32 field, MovesVector &movesVec) const;
     
